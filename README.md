@@ -21,7 +21,6 @@ or change connection to `psrp`:https://docs.ansible.com/ansible/latest/plugins/c
 
 # Requirements
 
-For sure:
 - Terraform binary
 - Ansible >= 2.7.9 (not yet released, but should change Pipfile when it is - [Presently have it locked to a specific commit that fixes winrm timing out](https://github.com/ansible/ansible/pull/53307))
 - Python 3.7

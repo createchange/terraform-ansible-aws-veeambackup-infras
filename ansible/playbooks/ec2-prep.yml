@@ -1,0 +1,18 @@
+---
+- hosts: all
+  gather_facts: no
+  
+  tasks:
+   - name: wait for connection
+     wait_for_connection:
+             connect_timeout: 15
+             delay: 60
+             sleep: 15
+             timeout: 600
+
+   - name: shutdown for ec2_to_ami creation
+     win_command: shutdown /s /t 15 /f
+
+   - name: pause to allow for complete shutdown
+     pause:
+             seconds: 90

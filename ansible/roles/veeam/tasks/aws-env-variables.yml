@@ -1,0 +1,14 @@
+---
+- name: set aws_access_key_id var
+  win_environment:
+    level: machine
+    name: AWS_ACCESS_KEY_ID
+    value: '{{ aws_access_key_id }}'
+    state: present
+
+- name: set aws_secret_access_key var
+  win_environment:
+    level: machine
+    name: AWS_SECRET_ACCESS_KEY
+    value: '{{ aws_secret_access_key }}'
+    state: present

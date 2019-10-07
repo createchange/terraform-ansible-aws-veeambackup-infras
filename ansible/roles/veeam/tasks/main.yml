@@ -1,0 +1,6 @@
+---
+# tasks file for veeam
+#
+- import_tasks: veeam-install.yml
+- import_tasks: s3-browser-install.yml
+- import_tasks: aws-env-variables.yml

@@ -1,0 +1,4 @@
+---
+# vars file for veeam, consider using ansible-vault
+aws_access_key_id: redacted
+aws_secret_access_key: redacted

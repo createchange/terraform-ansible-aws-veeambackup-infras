@@ -1,0 +1,19 @@
+---
+- name: get Veeam .msi
+  win_copy:
+    src: files/Veeam.Backup365_2.0.0.567.msi
+    dest: C:\temp\veeam-backup.msi
+    force: no
+
+- name: install Veeam
+  win_package:
+    path: C:\temp\veeam-backup.msi
+    product_id: '{72BEC4A5-0CA1-401A-ACC1-F8C0C0A25385}'
+    state: present
+    arguments: '/qn ADDLOCAL=BR_OFFICE365,CONSOLE_OFFICE365,PS_OFFICE365 ACCEPT_THIRDPARTY_LICENSES=1 ACCEPT_EULA=1'
+
+- name: transfer license file
+  win_copy:
+    src: files/veeam_backup_rental_150_0.lic
+    dest: C:\temp\veeam_backup_rental_150_0.lic
+    force: yes

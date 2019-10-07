@@ -1,0 +1,40 @@
+---
+- name: get Nagios agent
+  win_get_url:
+    url: https://assets.nagios.com/downloads/ncpa/ncpa-2.1.6.exe
+    dest: C:\temp\ncpa.exe
+    force: no
+
+- name: install NCPA agent
+  win_package:
+    path: C:\temp\ncpa.exe
+    product_id: NCPA
+    state: present
+    arguments: '/S /TOKEN=redacted /NRDPURL=https://redacted.net/nrdp/ /NRDPTOKEN=redacted'
+
+- name: place NCPA ncpa.cfg file
+  win_template:
+    src: templates/ncpa.cfg.j2
+    dest: C:\Program Files (x86)\Nagios\NCPA\etc\ncpa.cfg
+
+- name: place NCPA nrdp.cfg file
+  win_template:
+    src: templates/nrdp.cfg.j2
+    dest: C:\Program Files (x86)\Nagios\NCPA\etc\ncpa.cfg.d\nrdp.cfg
+    force: yes
+
+- name: copy NCPA scripts
+  win_copy:
+    src: files/ncpa/
+    dest: C:\Program Files (x86)\Nagios\NCPA\plugins
+
+- name: restart NCPA passive service
+  win_service:
+    name: ncpapassive
+    state: restarted
+
+- name: restart NCPA listener service
+  win_service:
+    name: ncpalistener
+    state: restarted
+

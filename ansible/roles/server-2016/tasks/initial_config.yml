@@ -1,0 +1,34 @@
+---
+- name: wait for connection
+  wait_for_connection:
+          connect_timeout: 15
+          delay: 60
+          sleep: 15
+          timeout: 600
+
+- name: set hostname
+  win_hostname:
+    name: '{{ hostname }}'
+
+- name: set computer description
+  win_shell: Get-CimInstance -ClassName Win32_OperatingSystem | Set-CimInstance -Property @{Description = '{{ computer_description }}'}
+  vars:
+    computer_description: '{{ computer_desc }}'
+
+- name: set timezone to CST
+  win_timezone:
+    timezone: '{{ timezone }}'
+
+- name: create temp dir
+  win_file:
+    path: C:\temp
+    state: directory
+
+- name: create INT-Admin user account
+  win_user:
+          name: INT-Admin
+          password: '{{ int_admin_pass }}'
+          state: present
+          groups:
+                  - Administrators
+          password_never_expires: yes

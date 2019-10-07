@@ -1,0 +1,13 @@
+---
+- name: get s3browser executable
+  win_get_url:
+    url: https://s3browser.com/download/s3browser-8-1-5.exe
+    dest: C:\temp\s3browser.exe
+    force: no
+
+- name: install s3browser
+  win_package:
+    path: C:\temp\s3browser.exe
+    product_id: 'S3 Browser_is1'
+    state: present
+    arguments: '/VERYSILENT'

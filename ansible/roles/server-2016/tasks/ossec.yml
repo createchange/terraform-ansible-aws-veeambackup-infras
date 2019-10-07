@@ -1,0 +1,35 @@
+---
+- name: configure Windows for OSSEC
+  block:
+          - win_security_policy:
+                  section: Event Audit
+                  key: AuditLogonEvents
+                  value: 1
+          - win_security_policy:
+                  section: Event Audit
+                  key: AuditAccountLogon
+                  value: 1
+          - win_regedit:
+                  path: HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\WINEVT\Channels\Microsoft-Windows-TerminalServices-LocalSessionManager/Operational
+                  name: Enabled
+                  type: dword
+                  data: 1
+
+- name: get OSSEC agent
+  win_get_url:
+    url: http:/redacted.com/OSSEC/ossec-agent-win32-3.2.0-6132.exe
+    dest: C:\temp\ossec_agent_install.exe
+    force: no
+
+- name: install OSSEC agent
+  win_package:
+    path: C:\temp\ossec_agent_install.exe
+    product_id: OSSEC
+    state: present
+    arguments: /S
+
+- name: place OSSEC config file
+  win_template:
+    src: templates/ossec_standard.conf.j2
+    dest: C:\Program Files (x86)\ossec-agent\ossec.conf
+

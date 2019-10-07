@@ -1,0 +1,21 @@
+[passive checks]
+# Host check  - This is to stop "pending check" status in Nagios
+%HOSTNAME%|__HOST__ = system/agent_version
+# Service checks
+%HOSTNAME%|CPU Usage = cpu/percent --warning 60 --critical 80 --aggregate avg 
+%HOSTNAME%|Swap Usage = memory/swap --warning 70 --critical 80 --units Gi 
+%HOSTNAME%|Memory Usage = memory/virtual --warning 80 --critical 90 --units Gi 
+%HOSTNAME%|Process Count = processes --warning 300 --critical 400 
+#%HOSTNAME%|C Drive = disk/logical/C:| --warning 75 --critical 80 --units % 
+# Service Names (Not Service Display Names) 
+# AppAssureAgent 
+# RapidRecoveryAgent   (Quest Rapid Recovery, replaces AppAssure) 
+# WinRM   (Windows Remote Desktop) 
+# Dnscache   (DNS Client) 
+# Dhcp (DHCP Client) 
+# Kaseya\sAntiMa to encode spaces 
+# MSSQL\$RACSTAGE to encode dollar signs 
+%HOSTNAME%|Services = services --service Dnscache|eventlog|TSGateway|IISADMIN|Tssdis|KAINTNTK --match regex --status running 
+%HOSTNAME%|WinUpdates|3600 = plugins/check-available-updates.vbs 
+%HOSTNAME%|Fixed Disks = plugins/check_disk.wsf 
+#%HOSTNAME%|Check AD = plugins/check_ad.vbs 0

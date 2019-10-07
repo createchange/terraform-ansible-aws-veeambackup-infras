@@ -1,0 +1,18 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[dev-packages]
+
+[packages]
+boto = "*"
+six = "*"
+ansible = { git = 'https://github.com/ansible/ansible.git', ref = 'ae24bbff4abf7dce43026f18bf113c2f76ba8301', editable = true }
+boto3 = "*"
+botocore = "*"
+pywinrm = "*"
+requests = "*"
+
+[requires]
+python_full_version = "3.7.1"

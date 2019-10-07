@@ -1,0 +1,13 @@
+---
+- name: get VSA agent
+  win_get_url:
+    url: http://redacted.com/vsa/int_agent.exe
+    dest: C:\temp\vsa_agent_install.exe
+    force: no
+
+- name: install VSA agent
+  win_package:
+    path: C:\temp\vsa_agent_install.exe
+    product_id: KAINTNTK44468048088475
+    state: present
+    arguments: /s

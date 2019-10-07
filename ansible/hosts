@@ -1,0 +1,8 @@
+[win]
+18.188.209.82
+
+[win:vars]
+ansible_user=administrator
+ansible_password=testing123!
+ansible_connection=winrm
+ansible_winrm_server_cert_validation=ignore

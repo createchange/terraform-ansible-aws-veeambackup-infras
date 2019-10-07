@@ -1,0 +1,13 @@
+---
+# vars file for server-2016
+
+# EC2 instance variables
+int_admin_pass: "redacted"
+hostname: "int-sv-int-v365"
+computer_desc: "Veeam Office365 Backup Server"
+timezone: "Central Standard Time" # Should be in full verbose nomenclature 
+
+# OSSEC config
+ossec_config: "standard" # Can be: standard, terminal server, iis
+ossec_ip: "8.8.8.8"
+

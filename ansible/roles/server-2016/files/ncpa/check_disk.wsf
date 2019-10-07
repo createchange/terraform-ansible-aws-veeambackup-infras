@@ -1,0 +1,152 @@
+'
+'***********************************************************************
+' "check_disk.wsf"
+'
+' Written by Aaron Wurthmann (aaron AT wurthmann DOT com)
+'
+' 2007.07.22 ver 1.5
+' If you edit please keep my name as an orginal author.
+' As of this writting I am unsure if script will work with all scenerios.
+' I adapted this script from ronald van vugt's Check_Services.wsf
+' -----------------------------------------------------------------------
+' Checks for disk percent usage on all Windows partitions/logical disks.
+'************************************************************************
+
+
+<job>
+<runtime>
+  <description>
+
+Check_Disks (nrpe_nt-plugin) 1.5
+This nrpe_nt plugin come with ABSOLUTELY NO WARRANTY. You may redistribute
+copies of the plugins under the terms of the GNU General Public License.
+
+  </description>
+    <named
+      name="h"
+      helpstring="Help"
+      type="simple"
+      required="false" 
+    />
+  />
+
+  <example>
+         
+  You do not need a string for this plugin.
+         	
+  This script checks if all partitions/logical drives are below their
+  Warning and Critical Levels, which you can set for yourself below.
+  i.e. intWarningLevel = 85, intCriticalLevel = 95.
+
+  Usage: command[check_disk]=c:\Windows\system32\cscript.exe //NoLogo //T:10 check_disk.wsf
+
+  </example>
+
+</runtime>
+
+<script language="VBScript">
+
+
+'*******************************************************************
+' Help
+'*******************************************************************
+If Wscript.Arguments.Named.Exists("h") Then
+      Wscript.Echo "Plugin help screen:"
+      Wscript.Arguments.ShowUsage()
+      Wscript.Quit(3)
+End If
+
+'*******************************************************************
+' Main
+'*******************************************************************
+Dim intResultWarning
+Dim intResultError
+Dim intCapUsed
+Dim intCapSize
+Dim intCapFree
+Dim intPerCapUsed
+Dim intMegs
+Dim intWarningLevel
+Dim intCriticalLevel
+Dim strResultWarning
+Dim strResultError
+Dim strComputer
+Dim strDeviceInfo
+Dim strAllDeviceInfo
+Dim strPerfInfo
+
+intResultWarning = 0
+intResultError = 0
+intCapUsed = 0
+intCapSize = 0
+intCapFree = 0
+intPerCapUsed = 0
+intMegs = 1048576
+intResultWarning = 0
+intResultError = 0
+intWarningLevel = 75
+intCriticalLevel = 85
+strResultWarning = ""
+strResultError = ""
+strComputer = "."
+strDeviceInfo = ""
+strAllDeviceInfo = ""
+strPerfInfo = " |"
+
+Set objWMIService = GetObject("winmgmts:{impersonationLevel=impersonate}!\\" & strComputer & "\root\cimv2")
+
+Set colDisks = objWMIService.ExecQuery("select * from Win32_LogicalDisk where DriveType='3' and Volumename<>'Backups'")
+	
+For Each objDisk in colDisks
+	intCapSize = objDisk.Size / intMegs
+	intCapFree = objDisk.Freespace / intMegs
+	intCapUsed = intCapSize - intCapFree
+	intPerCapUsed = intCapUsed / intCapSize * 100
+	intCapSize = Split(intCapSize, ".", -1, 1)
+	intCapUsed = Split(intCapUsed, ".", -1, 1)
+
+	strDeviceInfo = objDisk.DeviceID & " (Used " & intCapUsed(0) & " MB of " & intCapSize(0) & " MB)"
+
+	if intPerCapUsed > intCriticalLevel Then
+		intResultError = 2
+        if strResultError <> "" then
+			strResultError =  strDeviceInfo & " and " & strResultError
+		else
+			strResultError = strDeviceInfo & " has exceeded the Critical Level of "& intCriticalLevel &"% Used."
+		end if
+	else
+		if intPerCapUsed > intWarningLevel Then	
+			intResultWarning = 1
+            if strResultWarning <> "" then
+				strResultWarning = strDeviceInfo & " and " & strResultWarning
+	        else	
+				strResultWarning = strDeviceInfo & " has exceeded the Warning Level of "& intWarningLevel &"% Used."
+	        end if	
+		end if	
+	end if
+
+	if strAllDeviceInfo <> "" then
+		strAllDeviceInfo =  strDeviceInfo & ", " & strAllDeviceInfo
+	else
+		strAllDeviceInfo = strDeviceInfo
+	end if
+	
+	strPerfInfo = strPerfInfo & " " & Replace(objDisk.DeviceID,":","") & "_used_percent=" & intPerCapUsed & ";" & intWarningLevel & ";" & intCriticalLevel
+	
+Next
+
+
+Select case intResultWarning + intResultError
+  Case 0 wscript.echo "OK: Drive(s) checked: " & strAllDeviceInfo & strPerfInfo
+         wscript.quit(0)
+  Case 1 wscript.echo strResultWarning & strPerfInfo
+         wscript.quit(1)
+  Case 2 wscript.echo strResultError & strPerfInfo
+         wscript.quit(2)
+  Case 3 wscript.echo strResultError & strPerfInfo & vbCRLF & strResultWarning
+         wscript.quit(2)
+end select
+
+'*******************************************************************
+</script>
+</job>

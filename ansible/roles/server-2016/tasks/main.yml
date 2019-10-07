@@ -1,0 +1,8 @@
+---
+# tasks file for server-2016
+#
+- import_tasks: initial_config.yml
+- import_tasks: reboot.yml
+- import_tasks: vsa_setup.yml
+- import_tasks: ossec.yml
+- import_tasks: ncpa.yml
